@@ -1,5 +1,13 @@
 import { Args } from '@/runtime';
 
+// 添加类型定义
+interface SchemaValue {
+  type: string;
+  properties?: Record<string, SchemaValue>;
+  items?: SchemaValue;
+  [key: string]: any;
+}
+
 interface JsonToSchemaInput {
   /**
    * The JSON object to convert to schema

@@ -139,6 +139,93 @@ function simplifySchema(schema: any): object {
 // Translation Application Functions
 
 /**
+ * 创建类似于i18n风格的键映射，使用完整路径作为键
+ * 而不是依赖于顺序匹配键
+ */
+function createI18nStyleKeyMap(
+  originalSchema: any,
+  translatedSchema: any
+): Record<string, string> {
+  // 用于存储键映射关系的对象
+  const keyMap: Record<string, string> = {};
+  
+  // 用于存储翻译后的键及其路径
+  const translatedKeyPaths: Record<string, string> = {};
+  
+  // 首先提取翻译后的键路径
+  extractKeyPaths(translatedSchema, translatedKeyPaths, '');
+  
+  // 然后创建原始键到翻译键的映射
+  createKeyMapFromSchema(originalSchema, keyMap, translatedKeyPaths, '');
+  
+  return keyMap;
+}
+
+/**
+ * 从schema中提取所有键的路径
+ */
+function extractKeyPaths(
+  schema: any,
+  keyPaths: Record<string, string>,
+  currentPath: string
+): void {
+  if (!schema || schema.type !== 'object' || !schema.properties) {
+    return;
+  }
+  
+  // 处理对象的属性
+  for (const [key, value] of Object.entries(schema.properties)) {
+    const newPath = currentPath ? `${currentPath}.${key}` : key;
+    
+    // 存储类型信息和路径
+    keyPaths[newPath] = key;
+    
+    // 递归处理嵌套对象
+    if (value && typeof value === 'object') {
+      if (value.type === 'object' && value.properties) {
+        extractKeyPaths(value, keyPaths, newPath);
+      } else if (value.type === 'array' && value.items && value.items.type === 'object') {
+        extractKeyPaths(value.items, keyPaths, `${newPath}[]`);
+      }
+    }
+  }
+}
+
+/**
+ * 创建从原始键到翻译键的映射
+ */
+function createKeyMapFromSchema(
+  schema: any,
+  keyMap: Record<string, string>,
+  translatedKeyPaths: Record<string, string>,
+  currentPath: string
+): void {
+  if (!schema || schema.type !== 'object' || !schema.properties) {
+    return;
+  }
+  
+  // 处理对象的属性
+  for (const [key, value] of Object.entries(schema.properties)) {
+    const newPath = currentPath ? `${currentPath}.${key}` : key;
+    
+    // 查找对应的翻译键
+    // 因为路径模式是相同的，所以可以直接查找
+    if (translatedKeyPaths[newPath]) {
+      keyMap[key] = translatedKeyPaths[newPath];
+    }
+    
+    // 递归处理嵌套对象
+    if (value && typeof value === 'object') {
+      if (value.type === 'object' && value.properties) {
+        createKeyMapFromSchema(value, keyMap, translatedKeyPaths, newPath);
+      } else if (value.type === 'array' && value.items && value.items.type === 'object') {
+        createKeyMapFromSchema(value.items, keyMap, translatedKeyPaths, `${newPath}[]`);
+      }
+    }
+  }
+}
+
+/**
  * Applies a key mapping to a JSON object
  */
 function applyTranslatedKeys(
@@ -176,52 +263,6 @@ function applyTranslatedKeys(
   
   // Return primitive values as is
   return json;
-}
-
-/**
- * Helper function to extract key mappings by comparing original and translated schemas
- */
-function extractKeyMappings(
-  original: any, 
-  translated: any, 
-  keyMap: Record<string, string> = {},
-  path: string = ''
-): Record<string, string> {
-  if (!original || !translated || typeof original !== 'object' || typeof translated !== 'object') {
-    return keyMap;
-  }
-  
-  if (original.type === 'object' && translated.type === 'object' &&
-      original.properties && translated.properties) {
-    
-    const originalKeys = Object.keys(original.properties);
-    const translatedKeys = Object.keys(translated.properties);
-    
-    // Map original keys to translated keys
-    for (let i = 0; i < Math.min(originalKeys.length, translatedKeys.length); i++) {
-      const originalKey = originalKeys[i];
-      const translatedKey = translatedKeys[i];
-      
-      // Store the mapping
-      keyMap[originalKey] = translatedKey;
-      
-      // Recursively process nested objects
-      extractKeyMappings(
-        original.properties[originalKey],
-        translated.properties[translatedKey],
-        keyMap,
-        path ? `${path}.${originalKey}` : originalKey
-      );
-    }
-  }
-  
-  if (original.type === 'array' && translated.type === 'array' &&
-      original.items && translated.items) {
-    // Recursively process array items
-    extractKeyMappings(original.items, translated.items, keyMap, path ? `${path}[]` : '[]');
-  }
-  
-  return keyMap;
 }
 
 /**
@@ -264,8 +305,8 @@ export async function handler({
       // 无需从输入获取原始schema，直接生成
       const originalSchema = generateKeySchema(input.json);
       
-      // Extract key mapping
-      const keyMap = extractKeyMappings(
+      // 使用i18n风格的键映射方法，不依赖键的顺序
+      const keyMap = createI18nStyleKeyMap(
         originalSchema,
         input.translatedSchema
       );

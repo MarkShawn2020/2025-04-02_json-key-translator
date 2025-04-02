@@ -10,6 +10,24 @@ A Node.js library for translating JSON keys between languages.
 - Support for preserving original keys alongside translated ones
 - Support for custom translation functions
 - Support for reusing previous translations with key maps
+- **I18n-style key mapping** for precise and reliable translations
+
+## Key Concepts
+
+### I18n-Style Key Mapping
+
+This library uses an internationalization (i18n) style approach to key mapping, which offers several benefits:
+
+1. **Path-based mapping**: Keys are mapped based on their path in the JSON structure, not their order or position
+2. **Reliable translations**: Even if keys are reordered or structures change slightly, the mapping remains accurate
+3. **Context-aware**: The full path provides context for translation, helping when the same key name appears in different contexts
+
+Traditional position-based mapping can lead to errors when:
+- Keys are reordered during translation
+- Some keys are skipped or added
+- The structure changes slightly
+
+Our i18n approach maps keys based on their semantic path (like `user.contact.email`), ensuring accurate translations regardless of order.
 
 ## Installation
 

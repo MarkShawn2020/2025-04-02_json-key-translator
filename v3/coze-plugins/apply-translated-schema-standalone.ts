@@ -1,5 +1,13 @@
 import { Args } from '@/runtime';
 
+// 添加类型定义
+interface SchemaValue {
+  type: string;
+  properties?: Record<string, SchemaValue>;
+  items?: SchemaValue;
+  [key: string]: any;
+}
+
 interface ApplyTranslationInput {
   /**
    * The original JSON object
@@ -126,49 +134,96 @@ function applyTranslatedKeys(
 }
 
 /**
- * Helper function to extract key mappings by comparing original and translated schemas
+ * 创建类似于i18n风格的键映射，使用完整路径作为键
+ * 而不是依赖于顺序匹配键
  */
-function extractKeyMappings(
-  original: any, 
-  translated: any, 
-  keyMap: Record<string, string> = {},
-  path: string = ''
+function createI18nStyleKeyMap(
+  originalSchema: any,
+  translatedSchema: any
 ): Record<string, string> {
-  if (!original || !translated || typeof original !== 'object' || typeof translated !== 'object') {
-    return keyMap;
-  }
+  // 用于存储键映射关系的对象
+  const keyMap: Record<string, string> = {};
   
-  if (original.type === 'object' && translated.type === 'object' &&
-      original.properties && translated.properties) {
-    
-    const originalKeys = Object.keys(original.properties);
-    const translatedKeys = Object.keys(translated.properties);
-    
-    // Map original keys to translated keys
-    for (let i = 0; i < Math.min(originalKeys.length, translatedKeys.length); i++) {
-      const originalKey = originalKeys[i];
-      const translatedKey = translatedKeys[i];
-      
-      // Store the mapping
-      keyMap[originalKey] = translatedKey;
-      
-      // Recursively process nested objects
-      extractKeyMappings(
-        original.properties[originalKey],
-        translated.properties[translatedKey],
-        keyMap,
-        path ? `${path}.${originalKey}` : originalKey
-      );
-    }
-  }
+  // 用于存储翻译后的键及其路径
+  const translatedKeyPaths: Record<string, string> = {};
   
-  if (original.type === 'array' && translated.type === 'array' &&
-      original.items && translated.items) {
-    // Recursively process array items
-    extractKeyMappings(original.items, translated.items, keyMap, path ? `${path}[]` : '[]');
-  }
+  // 首先提取翻译后的键路径
+  extractKeyPaths(translatedSchema, translatedKeyPaths, '');
+  
+  // 然后创建原始键到翻译键的映射
+  createKeyMapFromSchema(originalSchema, keyMap, translatedKeyPaths, '');
   
   return keyMap;
+}
+
+/**
+ * 从schema中提取所有键的路径
+ */
+function extractKeyPaths(
+  schema: any,
+  keyPaths: Record<string, string>,
+  currentPath: string
+): void {
+  if (!schema || typeof schema !== 'object' || schema.type !== 'object' || !schema.properties) {
+    return;
+  }
+  
+  // 处理对象的属性
+  for (const [key, value] of Object.entries(schema.properties)) {
+    const newPath = currentPath ? `${currentPath}.${key}` : key;
+    
+    // 存储键及其路径
+    keyPaths[newPath] = key;
+    
+    // 递归处理嵌套对象
+    if (value && typeof value === 'object') {
+      const schemaValue = value as SchemaValue;
+      
+      if (schemaValue.type === 'object' && schemaValue.properties) {
+        extractKeyPaths(schemaValue, keyPaths, newPath);
+      } else if (schemaValue.type === 'array' && schemaValue.items && 
+                 schemaValue.items.type === 'object') {
+        extractKeyPaths(schemaValue.items, keyPaths, `${newPath}[]`);
+      }
+    }
+  }
+}
+
+/**
+ * 创建从原始键到翻译键的映射
+ */
+function createKeyMapFromSchema(
+  schema: any,
+  keyMap: Record<string, string>,
+  translatedKeyPaths: Record<string, string>,
+  currentPath: string
+): void {
+  if (!schema || typeof schema !== 'object' || schema.type !== 'object' || !schema.properties) {
+    return;
+  }
+  
+  // 处理对象的属性
+  for (const [key, value] of Object.entries(schema.properties)) {
+    const newPath = currentPath ? `${currentPath}.${key}` : key;
+    
+    // 查找对应的翻译键
+    // 因为路径模式是相同的，所以可以直接查找
+    if (translatedKeyPaths[newPath]) {
+      keyMap[key] = translatedKeyPaths[newPath];
+    }
+    
+    // 递归处理嵌套对象
+    if (value && typeof value === 'object') {
+      const schemaValue = value as SchemaValue;
+      
+      if (schemaValue.type === 'object' && schemaValue.properties) {
+        createKeyMapFromSchema(schemaValue, keyMap, translatedKeyPaths, newPath);
+      } else if (schemaValue.type === 'array' && schemaValue.items && 
+                 schemaValue.items.type === 'object') {
+        createKeyMapFromSchema(schemaValue.items, keyMap, translatedKeyPaths, `${newPath}[]`);
+      }
+    }
+  }
 }
 
 /**
@@ -189,8 +244,8 @@ export async function handler({
     // 先将原始JSON转换为schema格式
     const originalSchema = generateKeySchema(input.originalJson);
     
-    // 提取键映射，现在对比的是两个schema
-    const keyMap = extractKeyMappings(
+    // 使用i18n风格的键映射方法，不依赖键的顺序
+    const keyMap = createI18nStyleKeyMap(
       originalSchema,
       input.translatedSchema
     );
