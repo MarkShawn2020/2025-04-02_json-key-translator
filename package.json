@@ -1,0 +1,37 @@
+{
+  "name": "json-key-translator",
+  "version": "0.1.0",
+  "description": "A library for translating JSON keys between languages",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "json",
+    "translation",
+    "i18n",
+    "localization",
+    "internationalization"
+  ],
+  "author": "",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.13.17",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.3.1",
+    "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "@types/node-fetch": "^2.6.12",
+    "json-schema-generator": "^2.0.6",
+    "node-fetch": "^3.3.2",
+    "to-json-schema": "^0.2.5"
+  }
+}
