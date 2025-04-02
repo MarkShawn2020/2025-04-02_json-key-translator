@@ -1,238 +1,150 @@
-# JSON Key Translator for Coze
+# JSON 大师 - Coze 插件
 
-This directory contains plugins for Coze to enable JSON key translation within Coze workflows.
+JSON 大师是一套专为 Coze 平台设计的 JSON 处理工具集，提供高效便捷的 JSON 转换、翻译和展示功能。通过这些插件，您可以轻松实现 JSON 数据的各种处理需求，无需复杂的编程知识。
 
-## Overview
+## 功能概览
 
-The translation process is split into 3 steps:
+JSON 大师包含三个强大的工具:
 
-1. **JSON to Schema**: Convert a JSON object to a schema focused on keys
-2. **Schema Translation**: Translate the schema keys (handled by Coze LLM)
-3. **Apply Translation**: Apply the translated schema back to the original JSON
+1. **json2schema** - 将 JSON 对象转换为结构化的 schema，便于理解和处理复杂 JSON 结构
+2. **translate_json_keys** - 翻译 JSON 对象的键名，支持多语言场景，保持数据结构不变
+3. **json2md** - 将 JSON 数据转换为美观的 Markdown 表格，提升数据可读性
 
-## Plugins
+## 插件详情
 
-We provide three plugin options:
+### json2schema
 
-### Option 1: Standalone Single-Purpose Plugins
+将复杂的 JSON 对象转换为清晰的结构描述。
 
-- `json-to-schema-standalone.ts`: Converts JSON to schema
-- `apply-translated-schema-standalone.ts`: Applies translated schema to original JSON
+**输入:**
+- `json`: JSON 字符串或对象
 
-### Option 2: All-in-One Plugin
+**输出:**
+- `schema`: 生成的 JSON schema 字符串
 
-- `json-key-translator-all-in-one.ts`: Handles both schema generation and translation application in a single plugin with operation selection
+**示例:**
 
-All plugins are self-contained and don't require external dependencies.
-
-## Usage in Coze
-
-### Using Separate Plugins
-
-1. **Add the plugins to your Coze workspace**:
-   Copy the plugin files to your Coze workspace.
-
-2. **Create a workflow**:
-   
-   a. **Input Node**: Accepts the JSON to translate.
-   
-   b. **JSON to Schema Node**: Uses the `json-to-schema-standalone.ts` plugin to generate a schema.
-   
-   c. **LLM Translation Node**: Uses Coze's LLM with a prompt like:
-   ```
-   I need you to translate the keys in this JSON schema from English to Chinese.
-   Only translate the keys, not the values or structure.
-   Keep the same JSON structure, just return a new JSON with translated keys.
-
-   Here's the schema:
-   {{context.schema}}
-
-   Return only the translated JSON schema with no additional text.
-   ```
-   
-   d. **Apply Translation Node**: Uses the `apply-translated-schema-standalone.ts` plugin to apply the translated schema.
-   
-   e. **Output Node**: Returns the translated JSON and key mappings.
-
-### Using All-in-One Plugin
-
-1. **Add the all-in-one plugin to your Coze workspace**:
-   Copy `json-key-translator-all-in-one.ts` to your Coze workspace.
-
-2. **Create a workflow**:
-   
-   a. **Input Node**: Accepts the JSON to translate.
-   
-   b. **Schema Generation Node**: Uses the all-in-one plugin with `operation: "generateSchema"`.
-   
-   c. **LLM Translation Node**: Uses Coze's LLM to translate the schema.
-   
-   d. **Translation Application Node**: Uses the all-in-one plugin again with:
-      - `operation: "applyTranslation"`
-      - `json`: The original JSON
-      - `translatedSchema`: The schema translated by the LLM
-   
-   e. **Output Node**: Returns the translated JSON and key mappings.
-
-## Example Input/Output
-
-### JSON to Schema Input:
+输入:
 ```json
 {
-  "json": {
-    "name": "John Doe",
-    "age": 30,
-    "contact": {
-      "email": "john@example.com",
-      "phone": "123-456-7890"
-    }
-  }
+  "json": "{\"name\":\"John\",\"age\":30,\"contact\":{\"email\":\"john@example.com\"}}"
 }
 ```
 
-### JSON to Schema Output:
+输出:
 ```json
 {
-  "schema": {
-    "type": "object",
-    "properties": {
-      "name": { "type": "string" },
-      "age": { "type": "number" },
-      "contact": {
-        "type": "object",
-        "properties": {
-          "email": { "type": "string" },
-          "phone": { "type": "string" }
-        }
-      }
-    }
-  },
-  "originalJson": {
-    "name": "John Doe",
-    "age": 30,
-    "contact": {
-      "email": "john@example.com",
-      "phone": "123-456-7890"
-    }
-  }
+  "schema": "{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"age\":{\"type\":\"number\"},\"contact\":{\"type\":\"object\",\"properties\":{\"email\":{\"type\":\"string\"}}}}}"
 }
 ```
 
-### LLM Translation (example output):
+### translate_json_keys
+
+将 JSON 对象的键名翻译为目标语言，保持原始数据结构和值不变。
+
+**输入:**
+- `originalJson`: 原始 JSON 字符串或对象
+- `translatedSchema`: 已翻译的 schema 字符串或对象
+- `preserveOriginalKeys`: 是否保留原始键名 (可选，默认 false)
+
+**输出:**
+- `translatedJson`: 键名已翻译的 JSON 对象
+- `keyMap`: 原始键名到翻译键名的映射
+
+**使用流程:**
+1. 使用 `json2schema` 生成原始 JSON 的 schema
+2. 通过 LLM 或其他方式翻译 schema 中的键名
+3. 使用 `translate_json_keys` 将翻译后的 schema 应用到原始 JSON
+
+**示例:**
+
+输入:
 ```json
 {
-  "type": "object",
-  "properties": {
-    "姓名": { "type": "string" },
-    "年龄": { "type": "number" },
-    "联系方式": {
-      "type": "object",
-      "properties": {
-        "电子邮件": { "type": "string" },
-        "电话": { "type": "string" }
-      }
-    }
-  }
+  "originalJson": "{\"name\":\"John\",\"age\":30,\"contact\":{\"email\":\"john@example.com\"}}",
+  "translatedSchema": "{\"type\":\"object\",\"properties\":{\"姓名\":{\"type\":\"string\"},\"年龄\":{\"type\":\"number\"},\"联系方式\":{\"type\":\"object\",\"properties\":{\"邮箱\":{\"type\":\"string\"}}}}}"
 }
 ```
 
-### Apply Translation Input:
-```json
-{
-  "originalJson": {
-    "name": "John Doe",
-    "age": 30,
-    "contact": {
-      "email": "john@example.com",
-      "phone": "123-456-7890"
-    }
-  },
-  "translatedSchema": {
-    "type": "object",
-    "properties": {
-      "姓名": { "type": "string" },
-      "年龄": { "type": "number" },
-      "联系方式": {
-        "type": "object",
-        "properties": {
-          "电子邮件": { "type": "string" },
-          "电话": { "type": "string" }
-        }
-      }
-    }
-  },
-  "preserveOriginalKeys": false
-}
-```
-
-### Apply Translation Output:
+输出:
 ```json
 {
   "translatedJson": {
-    "姓名": "John Doe",
+    "姓名": "John",
     "年龄": 30,
     "联系方式": {
-      "电子邮件": "john@example.com",
-      "电话": "123-456-7890"
+      "邮箱": "john@example.com"
     }
   },
   "keyMap": {
     "name": "姓名",
     "age": "年龄",
     "contact": "联系方式",
-    "email": "电子邮件",
-    "phone": "电话"
+    "email": "邮箱"
   }
 }
 ```
 
-### All-in-One Plugin Input (Schema Generation):
+### json2md
+
+将 JSON 数据转换为格式化的 Markdown 表格，提升可读性和展示效果。
+
+**输入:**
+- `json`: JSON 字符串或对象
+- `options`: 转换选项 (可选)
+  - `nestingLevel`: 嵌套级别 (默认: 1)
+  - `includeHeaders`: 是否包含表头 (默认: true)
+
+**输出:**
+- `markdown`: 生成的 Markdown 文本
+
+**示例:**
+
+输入:
 ```json
 {
-  "json": {
-    "name": "John Doe",
-    "age": 30,
-    "contact": {
-      "email": "john@example.com",
-      "phone": "123-456-7890"
-    }
-  },
-  "operation": "generateSchema"
+  "json": "[{\"name\":\"John\",\"age\":30},{\"name\":\"Jane\",\"age\":25}]"
 }
 ```
 
-### All-in-One Plugin Input (Apply Translation):
+输出:
 ```json
 {
-  "json": {
-    "name": "John Doe",
-    "age": 30,
-    "contact": {
-      "email": "john@example.com",
-      "phone": "123-456-7890"
-    }
-  },
-  "operation": "applyTranslation",
-  "translatedSchema": {
-    "type": "object",
-    "properties": {
-      "姓名": { "type": "string" },
-      "年龄": { "type": "number" },
-      "联系方式": {
-        "type": "object",
-        "properties": {
-          "电子邮件": { "type": "string" },
-          "电话": { "type": "string" }
-        }
-      }
-    }
-  },
-  "preserveOriginalKeys": false
+  "markdown": "| name | age |\n|------|-----|\n| John | 30  |\n| Jane | 25  |"
 }
 ```
 
-## Notes
+渲染效果:
 
-- The type declaration for `Args` from `@/runtime` is specific to Coze and will be resolved by the Coze platform.
-- For large JSON structures, consider adding pagination or chunking to avoid hitting token limits.
-- The key mapping is determined by position in the schema, so ensure the LLM preserves the structure. 
+| name | age |
+|------|-----|
+| John | 30  |
+| Jane | 25  |
+
+## 在 Coze 中使用
+
+1. 在 Coze 平台添加这些插件
+2. 创建新的工作流，通过菜单添加插件
+3. 为插件提供所需的输入参数
+4. 链接多个插件以实现复杂的 JSON 处理流程
+
+## 最佳实践
+
+- **JSON 键名翻译流程**:
+  1. 使用 `json2schema` 生成 schema
+  2. 让 AI 翻译 schema 中的键名
+  3. 使用 `translate_json_keys` 应用翻译
+
+- **改善数据展示**:
+  1. 获取 JSON 数据
+  2. 使用 `json2md` 将其转换为 Markdown 表格
+  3. 在聊天界面中显示格式化结果
+
+- **处理大型 JSON**:
+  对于大型 JSON 数据，考虑先使用结构化操作处理，再进行转换或翻译
+
+## 注意事项
+
+- 所有插件均为自包含设计，无需额外依赖
+- 插件支持 JSON 字符串和对象两种输入格式
+- 大型 JSON 处理可能需要适当调整策略 

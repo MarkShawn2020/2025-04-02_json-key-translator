@@ -3,14 +3,14 @@ import { applyTranslatedKeys } from 'json-key-translator';
 
 interface ApplyTranslationInput {
   /**
-   * The original JSON object
+   * The original JSON object or JSON string
    */
-  originalJson: any;
+  originalJson: any | string;
   
   /**
-   * The translated schema with translated keys
+   * The translated schema with translated keys (object or JSON string)
    */
-  translatedSchema: object;
+  translatedSchema: object | string;
   
   /**
    * Whether to preserve original keys alongside translated ones
@@ -20,7 +20,7 @@ interface ApplyTranslationInput {
 
 interface ApplyTranslationOutput {
   /**
-   * The JSON with translated keys
+   * The JSON with translated keys (object format)
    */
   translatedJson: any;
   
@@ -101,20 +101,29 @@ export async function handler({
   logger.info('Applying translated schema to original JSON...');
   
   try {
+    // 解析输入 - 支持对象或字符串格式
+    const originalJson = typeof input.originalJson === 'string' 
+      ? JSON.parse(input.originalJson) 
+      : input.originalJson;
+    
+    const translatedSchema = typeof input.translatedSchema === 'string'
+      ? JSON.parse(input.translatedSchema)
+      : input.translatedSchema;
+    
     // 先将原始JSON转换为schema格式
-    const originalSchema = generateKeySchema(input.originalJson);
+    const originalSchema = generateKeySchema(originalJson);
     
     // 提取键映射，现在对比的是两个schema
     const keyMap = extractKeyMappings(
       originalSchema, 
-      input.translatedSchema
+      translatedSchema
     );
     
     logger.info('Key mapping extracted:', keyMap);
     
     // 将翻译后的键应用到原始JSON
     const translatedJson = applyTranslatedKeys(
-      input.originalJson, 
+      originalJson, 
       keyMap, 
       input.preserveOriginalKeys || false
     );
