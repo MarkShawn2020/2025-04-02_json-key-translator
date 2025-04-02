@@ -1,9 +1,10 @@
 {
-  "name": "json-translator",
+  "name": "@neurora/json-translator",
   "version": "1.0.0",
   "description": "A tool for translating JSON files with schema generation and OpenAI integration",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "private": false,
   "bin": {
     "json-translator": "dist/cli.js"
   },
