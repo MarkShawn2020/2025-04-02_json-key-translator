@@ -1,0 +1,142 @@
+{
+  "businessPlan": {
+    "original": "businessPlan",
+    "translated": "商业计划",
+    "children": {
+      "businessModel": {
+        "original": "businessModel",
+        "translated": "商业模式"
+      },
+      "coreTeam": {
+        "original": "coreTeam",
+        "translated": "核心团队"
+      },
+      "coreTechnology": {
+        "original": "coreTechnology",
+        "translated": "核心技术"
+      },
+      "industryAndMarket": {
+        "original": "industryAndMarket",
+        "translated": "行业与市场"
+      },
+      "productsAndServices": {
+        "original": "productsAndServices",
+        "translated": "产品与服务"
+      },
+      "projectSummary": {
+        "original": "projectSummary",
+        "translated": "项目概要"
+      },
+      "strategicPlanning": {
+        "original": "strategicPlanning",
+        "translated": "战略规划"
+      }
+    }
+  },
+  "financials": {
+    "original": "financials",
+    "translated": "财务",
+    "children": {
+      "expenseProjections": {
+        "original": "expenseProjections",
+        "translated": "支出预测",
+        "children": {
+          "amount": {
+            "original": "amount",
+            "translated": "金额"
+          },
+          "year": {
+            "original": "year",
+            "translated": "年份"
+          }
+        }
+      },
+      "profitProjections": {
+        "original": "profitProjections",
+        "translated": "利润预测"
+      },
+      "revenueProjections": {
+        "original": "revenueProjections",
+        "translated": "收入预测",
+        "children": {
+          "amount": {
+            "original": "amount",
+            "translated": "金额"
+          },
+          "year": {
+            "original": "year",
+            "translated": "年份"
+          }
+        }
+      }
+    }
+  },
+  "patents": {
+    "original": "patents",
+    "translated": "专利"
+  },
+  "projectInfo": {
+    "original": "projectInfo",
+    "translated": "项目信息",
+    "children": {
+      "companyCode": {
+        "original": "companyCode",
+        "translated": "公司代码"
+      },
+      "companyName": {
+        "original": "companyName",
+        "translated": "公司名称"
+      },
+      "contactPerson": {
+        "original": "contactPerson",
+        "translated": "联系人"
+      },
+      "contactPhone": {
+        "original": "contactPhone",
+        "translated": "联系电话"
+      },
+      "developmentStage": {
+        "original": "developmentStage",
+        "translated": "开发阶段"
+      },
+      "industryCategory": {
+        "original": "industryCategory",
+        "translated": "行业类别"
+      },
+      "projectManager": {
+        "original": "projectManager",
+        "translated": "项目经理"
+      },
+      "projectName": {
+        "original": "projectName",
+        "translated": "项目名称"
+      }
+    }
+  },
+  "teamMembers": {
+    "original": "teamMembers",
+    "translated": "团队成员",
+    "children": {
+      "education": {
+        "original": "education",
+        "translated": "教育背景"
+      },
+      "experience": {
+        "original": "experience",
+        "translated": "工作经验"
+      },
+      "name": {
+        "original": "name",
+        "translated": "姓名"
+      },
+      "organization": {
+        "original": "organization",
+        "translated": "组织"
+      },
+      "position": {
+        "original": "position",
+        "translated": "职位"
+      }
+    }
+  }
+} 

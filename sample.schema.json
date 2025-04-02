@@ -1,0 +1,59 @@
+{
+  "businessPlan": {
+    "businessModel": "string",
+    "coreTeam": "string",
+    "coreTechnology": "string",
+    "industryAndMarket": "string",
+    "productsAndServices": "string",
+    "projectSummary": "string",
+    "strategicPlanning": "string"
+  },
+  "financials": {
+    "expenseProjections": {
+      "type": "array",
+      "items": {
+        "amount": "string",
+        "year": "string"
+      }
+    },
+    "profitProjections": {
+      "type": "array",
+      "items": {
+        "type": "any"
+      }
+    },
+    "revenueProjections": {
+      "type": "array",
+      "items": {
+        "amount": "string",
+        "year": "string"
+      }
+    }
+  },
+  "patents": {
+    "type": "array",
+    "items": {
+      "type": "any"
+    }
+  },
+  "projectInfo": {
+    "companyCode": "string",
+    "companyName": "string",
+    "contactPerson": "string",
+    "contactPhone": "string",
+    "developmentStage": "string",
+    "industryCategory": "string",
+    "projectManager": "string",
+    "projectName": "string"
+  },
+  "teamMembers": {
+    "type": "array",
+    "items": {
+      "education": "string",
+      "experience": "string",
+      "name": "string",
+      "organization": "string",
+      "position": "string"
+    }
+  }
+}

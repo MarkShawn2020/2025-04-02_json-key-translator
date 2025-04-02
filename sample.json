@@ -1,0 +1,75 @@
+{
+    "businessPlan": {
+      "businessModel": "通过广告和数据输出实现商业化，广告即内容的最佳载体，数据输出为媒体提供精准广告投放服务。",
+      "coreTeam": "技术、产品、研发导向的核心成员，在搜索与数据处理，社交网络挖掘，移动产品方向经验丰富。",
+      "coreTechnology": "独创的数据处理和推荐技术框架，自然语言处理、多媒体处理，社交挖掘分析，高维度用户兴趣建模，实时大规模数据运算。",
+      "industryAndMarket": "移动互联网开启了崭新的个性化数字媒体市场，中国手机网民规模持续稳定增长，移动互联网广告市场继续高速增长。",
+      "productsAndServices": "头条网页版及系列APP，提供泛资讯内容覆盖新闻、博客、影评、段子等，并通过个性化精确推荐读者感兴趣内容。",
+      "projectSummary": "字节跳动致力于打造基于社交挖掘和个性化推荐的新媒体平台，通过独创的个性化资讯发现引擎，满足用户更个性、更便捷、更互动的阅读体验。",
+      "strategicPlanning": "2013年产品会不断突破，加强进入壁垒，尝试国际化和商业化，扩充信息类型和来源，强化社区互动，深挖用户特征，升级推荐系统。"
+    },
+    "financials": {
+      "expenseProjections": [
+        {
+          "amount": "1,450,000",
+          "year": "2012"
+        },
+        {
+          "amount": "6,254,000",
+          "year": "2013"
+        },
+        {
+          "amount": "8,968,000",
+          "year": "2014"
+        }
+      ],
+      "profitProjections": [],
+      "revenueProjections": [
+        {
+          "amount": "6,000,000",
+          "year": "2014"
+        }
+      ]
+    },
+    "patents": [],
+    "projectInfo": {
+      "companyCode": "N/A",
+      "companyName": "北京字节跳动科技有限公司",
+      "contactPerson": "N/A",
+      "contactPhone": "N/A",
+      "developmentStage": "Growth Stage",
+      "industryCategory": "数字媒体",
+      "projectManager": "张一鸣",
+      "projectName": "最懂你的-基于社交挖掘和个性化推荐的新媒体"
+    },
+    "teamMembers": [
+      {
+        "education": "南开大学软件工程专业",
+        "experience": "曾创立九九房，加入海内/饭否管理团队，酷讯创业成员。",
+        "name": "张一鸣",
+        "organization": "北京字节跳动科技有限公司",
+        "position": "创始人 CEO"
+      },
+      {
+        "education": "北京工业大学",
+        "experience": "九九房移动产品总监，自我创业。",
+        "name": "黄河",
+        "organization": "北京字节跳动科技有限公司",
+        "position": "产品"
+      },
+      {
+        "education": "南开大学",
+        "experience": "艾克赛利主任工程师，九九房研发总监。",
+        "name": "梁汝波",
+        "organization": "北京字节跳动科技有限公司",
+        "position": "研发"
+      },
+      {
+        "education": "北京大学、德州大学",
+        "experience": "Oracle美国、微软中国高级产品经理，海豚浏览器VP。",
+        "name": "屠锋锋",
+        "organization": "北京字节跳动科技有限公司",
+        "position": "商务拓展"
+      }
+    ]
+  }
