@@ -1,6 +1,6 @@
 {
   "name": "json-key-translatorr",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Translate JSON keys between languages using AI",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
